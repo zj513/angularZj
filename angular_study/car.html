@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appCar">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <style>
+        [ng-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<table class="table table-bordered" ng-controller="carCtrl">
+    <tr>
+        <td>全选<input type="checkbox" ng-model="selectAll" ng-click="selectOn()"/></td>
+        <td>商品</td>
+        <td>数量</td>
+        <td>单价</td>
+        <td>小计</td>
+        <td>操作</td>
+    </tr>
+    <tr ng-repeat="key in products" ng-cloak>
+        <td><input type="checkbox" ng-model="key.selected" ng-click="selectOne()"/></td>
+        <td>{{key.name}}</td>
+        <!--ng-model双向绑定-->
+        <td>
+            <!--ng-disabled如果为true的时候此按钮禁止使用-->
+            <button ng-click="key.count=key.count-1" ng-disabled="key.count<=1">-</button>
+            <input type="text" ng-model="key.count"/>
+            <button ng-click="key.count=key.count+1">+</button>
+        </td>
+        <td>{{key.price}}</td>
+        <td>{{key.price*key.count}}</td>
+        <!--将要删除的数据传递到方法中-->
+        <td><button class="btn btn-danger" ng-click="del(key)">删除</button></td>
+    </tr>
+    <tr ng-cloak>
+        <td colspan="6">总价{{total()}}</td>
+    </tr>
+</table>
+<script type="text/javascript" src="../node_modules/angular/angular.js"></script>
+<script type="text/javascript" charset="utf-8">
+    var app = angular.module("appCar",[]);
+    app.controller('carCtrl',function($scope){
+        $scope.selectAll = true;
+        $scope.products = [
+            {name:'angularJs',price:44,count:1,selected:true},
+            {name:'Bootstrap',price:40,count:2,selected:true},
+            {name:'HTML5',price:25,count:1,selected:true},
+            {name:'CSS3',price:34,count:2,selected:true}
+        ];
+        $scope.del = function(key){
+            $scope.products = $scope.products.filter(function(item){
+                return key != item;  //返回为true的，为false过滤掉了
+            })
+        };
+        //循环每一项进行累加求和  此方法，当页面上的数据更改时，angular会做脏值检查，更新需要更新的数据
+        $scope.total = function(){
+            var sum = 0;
+            $scope.products.forEach(function(key){
+                sum+=key.price*key.count;
+            });
+            return sum;
+        };
+        $scope.selectOn = function(){
+            //下面的按钮都根据我们的selectAll
+            $scope.products.forEach(function(key){
+                key.selected = $scope.selectAll;
+            })
+        };
+
+        $scope.selectOne = (function(){
+            function s(){
+                var flag = true;
+                $scope.products.forEach(function(key){
+                    if(!key.selected) flag = false;
+                });
+                $scope.selectAll = flag;
+            }
+        })()
+    });
+    //选中多少商品  删除选中商品  只算出总计
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>对象遍历</title>
+    <script type="text/javascript" src="../node_modules/angular/angular.js"></script>
+</head>
+<body>
+<!--<div ng-controller="myCtrl">
+    <ul>
+        <li ng-repeat="value in arrs">
+            &lt;!&ndash;在数组中，遍历的时候最好加上 track by $index 防止循环的时无法通过不是&ndash;&gt;
+            {{value}}
+            &lt;!&ndash;{{$index}}&ndash;&gt;
+            &lt;!&ndash;{{$even}} {{$odd}} {{$first}} {{$last}}&ndash;&gt;
+        </li>
+    </ul>
+</div>-->
+<div ng-controller="myCtrl">
+    <ul>
+        <!--ng-repeat创建作用域-->
+        <li ng-repeat="(parentKey,phone) in phones">
+            {{phone.name}}{{$index}}
+            <ul>
+                <li ng-repeat="(children,t) in phone.type track by $index">
+                    {{t}}{{$index}}{{parentKey}}
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<!--ng-init就是在当前作用域下申明一个变量-->
+<!--<div ng-controller="myCtrl">
+    <ul>
+        &lt;!&ndash;ng-repeat创建作用域&ndash;&gt;
+        <li ng-repeat="phone in phones" ng-init="parent = $index">
+            {{phone.name}}{{$index}}
+            <ul>
+                <li ng-repeat="t in phone.type track by $index">
+                    {{t}}{{$index}}{{parent}}
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>-->
+<div ng-controller="myCtrl">
+    <ul>
+        <li ng-repeat="(key,k) in obj">
+            {{key}} : {{k}}
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    var app = angular.module('appModule', []);
+    app.controller('myCtrl', function ($scope) {
+        $scope.arrs = ['苹果', '三星', '小米'];
+        $scope.phones = [{name: '苹果', type: ['白色', '金色', '灰色']}, {name: '小米', type: ['白色', '黑色']},
+            {name: '华为', type: ['白色','灰色']}];
+        $scope.obj={
+            name:'zfpx',
+            age:'9',
+            address:'回龙观东大街'
+        };
+        //无论是对象还是数组通过for..in，取出来的永远都是我们的value值
+    })
+</script>
+</body>
+</html>
