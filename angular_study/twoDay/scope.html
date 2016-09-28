@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>scope--重点</title>
+</head>
+<body>
+<div ng-controller="myCtrl">
+    outer <input type="text" ng-model="name"/>
+    <!--<hello title="这是标题"></hello>-->
+    <hello name="{{name}}"></hello>
+</div>
+<script type="text/javascript" src="../../node_modules/angular/angular.js"></script>
+<script type="text/javascript">
+    //指令和控制器之间的交互，指令中需要使用控制器中的数据
+    var app = angular.module("appModule",[]);
+    app.controller('myCtrl',function($scope){
+        $scope.name = 112;
+    });
+    app.directive("hello",function(){
+        return {
+            template:'<div>inner<input type="text" ng-model="name"></div>',
+           // scope:true,  //保留一下
+            /*link:function(scope,element,attrs){
+                //scope.title = attrs['title']
+            },*/
+            scope:{
+                //name:'@title',
+                name:'@'  //引用的是title属性的字符串，如果名字相同后面的可以省略,如果不相同不能省略
+            }   //完全断绝关系
+        }
+    });
+    //@绑定的是字符串
+</script>
+</body>
+</html>

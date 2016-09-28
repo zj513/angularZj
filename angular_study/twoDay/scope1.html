@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>scope--重点</title>
+</head>
+<body>
+<div ng-controller="myCtrl">
+    outer <input type="text" ng-model="name"/>
+    <hello name="name"></hello>
+</div>
+<script type="text/javascript" src="../../node_modules/angular/angular.js"></script>
+<script type="text/javascript">
+    var app = angular.module("appModule",[]);
+    app.controller('myCtrl',function($scope){
+        $scope.name = 112;
+    });
+    app.directive("hello",function(){
+        return {
+            template:'<div>inner<input type="text" ng-model="name"></div>',
+            scope:{
+                //name:'@'
+                name:'='  //绑定的就是变量
+            }
+        }
+    });
+</script>
+</body>
+</html>

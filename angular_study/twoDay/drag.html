@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>拖拽</title>
+    <style type="text/css">
+        div{
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top:0;
+            left:0;
+            background: palegreen;
+            cursor: move;
+        }
+        div:nth-child(1){background: palegreen;}
+        div:nth-child(2){background: plum;}
+        div:nth-child(3){background: lightpink;}
+    </style>
+</head>
+<body>
+<div drag></div>
+<div drag></div>
+<div drag></div>
+<script type="text/javascript" src="../../node_modules/angular/angular.js"></script>
+<script type="text/javascript">
+    var app = angular.module('appModule',[]);
+    //指令默认不会创建作用域
+    app.directive('drag',function(){
+        return {
+            //link元素是唯一一个可以操作DOM的方法
+            link : function(scope,element,attrs){
+                element.on("mousedown",function(e){
+                    var disX = e.pageX - this.offsetLeft;  //鼠标距离盒子的距离
+                    var disY = e.pageY - this.offsetTop;
+                    //给element绑定移动较快，会导致脱离焦点，最好的办法就是绑定到document上
+                    angular.element(document).on("mousemove",function(e){
+                        //在angular中使用必须增加单位
+                        element.css({
+                            top: e.pageY - disY + 'px',
+                            left: e.pageX - disX + 'px'
+                        });
+                    });
+                    angular.element(document).on("mouseup",function(){
+                        angular.element(document).off();
+                    });
+                    e.preventDefault();
+                });
+                /*angular.element(document);
+                console.log(attrs);*/
+                /*
+                * scope:代表当前作用域
+                * element:当前指令元素所在的默认的JQ对象,用angular.element包住的就是jq对象
+                * attrs:表示当前元素的属性
+                * */
+            }
+        }
+    })
+</script>
+</body>
+</html>

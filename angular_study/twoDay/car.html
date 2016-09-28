@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appCar">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css"/>
+    <style>
+        [ng-cloak]{
+            display: none;
+        }
+    </style>
+</head>
+<body ng-controller="carCtrl">
+<div ng-bind-html="html"></div>
+<table class="table table-bordered">
+    <tr>
+        <td>全选<input type="checkbox" ng-model="selectAll" ng-click="selectOn()"/></td>
+        <td>商品</td>
+        <td>数量</td>
+        <td>单价</td>
+        <td>小计</td>
+        <td>操作</td>
+    </tr>
+    <tr ng-repeat="key in products" ng-cloak>
+        <td><input type="checkbox" ng-model="key.selected" ng-click="selectOne()"/></td>
+        <td>{{key.name}}</td>
+        <!--ng-model双向绑定-->
+        <td>
+            <!--ng-disabled如果为true的时候此按钮禁止使用-->
+            <button ng-click="key.count=key.count-1" ng-disabled="key.count<=1">-</button>
+            <input type="text" ng-model="key.count"  ng-readonly="true"/>
+            <button ng-click="key.count=key.count+1">+</button>
+        </td>
+        <td>{{key.price}}</td>
+        <td>{{key.price*key.count}}</td>
+        <!--将要删除的数据传递到方法中-->
+        <td><button class="btn btn-danger" ng-click="del(key)">删除</button></td>
+    </tr>
+    <tr ng-cloak>
+        <td colspan="6">
+            总价{{total()}}
+            <button ng-click="delAll()" class="btn btn-success">删除</button>
+            <!--<select ng-model="changeCote" ng-change = "changeSize()" name="select" id="select">
+                &lt;!&ndash;select不需要value值&ndash;&gt;
+                <option value="11">打一折</option>
+                <option value="22">打二折</option>
+                <option value="33">打三折</option>
+            </select>-->
+            <!--<select ng-model="changeCote">
+                <option value="{{c.value}}" ng-repeat="c in cotes">
+                    {{c.value}}
+                </option>
+            </select>-->
+            <!--c.value用作程序员可见 c.val用作用户可见 单个的在所有的里面遍历-->
+            <select ng-model="changeCote" ng-options="c.value as c.val for c in cotes">
+                <option value="">请选择</option>
+            </select>
+            {{total()*changeCote*0.1}}
+            <!--{{total()*changeCote*0.1|currency:"f"}}-->
+        </td>
+    </tr>
+</table>
+<script type="text/javascript" src="../../node_modules/angular/angular.js"></script>
+<script type="text/javascript" charset="utf-8">
+    var app = angular.module("appCar",[]);
+    /*$sce*/
+    app.controller('carCtrl',function($scope,$sce){
+        $scope.selectAll = true;
+        $scope.products = [
+            {name:'angularJs',price:44,count:1,selected:true},
+            {name:'Bootstrap',price:40,count:2,selected:true},
+            {name:'HTML5',price:25,count:1,selected:true},
+            {name:'CSS3',price:34,count:2,selected:true}
+        ];
+        $scope.del = function(key){
+            $scope.products = $scope.products.filter(function(item){
+                return key != item;  //返回为true的，为false过滤掉了
+            })
+        };
+        //循环每一项进行累加求和  此方法，当页面上的数据更改时，angular会做脏值检查，更新需要更新的数据
+        $scope.total = function(){
+            var sum = 0;
+            $scope.products.forEach(function(key){
+                sum+=key.price*key.count;
+            });
+            return sum;
+        };
+        $scope.selectOn = function(){
+            //下面的按钮都根据我们的selectAll
+            $scope.products.forEach(function(key){
+                key.selected = $scope.selectAll;
+            })
+        };
+
+        $scope.selectOne = (function(){
+            function s(){
+                var flag = true;
+                $scope.products.forEach(function(key){
+                    if(!key.selected) flag = false;
+                });
+                $scope.selectAll = flag;
+            }
+        })();
+        $scope.delAll = function(){
+            $scope.products.forEach(function(item){
+                if(item.selected){
+                    //如果为选中状态则删掉这条数据
+                    $scope.del(item);  //
+                }
+            })
+        };
+        $scope.changeSize = function(){
+            /*alert($scope.changeCote)*/
+        };
+        $scope.cotes = [
+            {value:1,val:"一折"},
+            {value:2,val:"二折"},
+            {value:3,val:"三折"},
+            {value:4,val:"四折"},
+            {value:5,val:"五折"}
+        ];
+        $scope.changeCote = 10;
+        $scope.html = $sce.trustAsHtml('<h1>这是购物车项目</h1>');
+    });
+    //选中多少商品  删除选中商品  只算出总计
+
+    //控制器的特点：
+    //1.创建控制器会有一个$scope，我们把数据挂载在$scope就可以实现数据的双向绑定(在控制器申明的属性元素，可以在当前的作用域下获取到)
+    //2.依赖注入
+    //3.Dom控制器的作用是平行的
+    //4.控制器可以嵌套使用，注意嵌套的是DOM标签
+    //5.控制器不能复用，而且作用的不仅是控制（不要操作DOM）中的唯一操作的地方是link函数
+</script>
+</body>
+</html>

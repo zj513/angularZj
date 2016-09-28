@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>指令</title>
+</head>
+<body>
+<my-hello></my-hello>
+<div my-hello></div>
+<div class="my-hello"></div>
+<!--directive：my-hello-->
+
+<!--指令  扩展功能 封装插件
+    装饰指令（美化，增加功能）
+    组件指令（编译出代码片段实现例如弹框，表格）
+-->
+<script type="text/javascript" src="../../node_modules/angular/angular.js"></script>
+<script type="text/javascript">
+    //自定义指令
+    var app = angular.module("appModule",[]);
+    /*
+    * 第一个参数代表指令的名字
+    * 第二个参数指令的定义默认返回对象
+    * */
+    app.directive('myHello',function(){
+        return{
+            /*
+            *es6语法提供的模板语法，可以帮我们快速的拼字符串
+            * `template:"<h1>hello</h1><p>every</p>"`
+            * */
+            //E：element   A：attribute
+            restrict:'EAMC',  //限定使用范围
+            replace:true,  //默认是将我们的模板插入到自定义的指令中，注释模板不显示，将最外层的标签替换掉（并且被替换的模板只能有一个根节点）
+            template:"<div><h1>hello</h1><p>every</p></div>"
+        }
+    })
+</script>
+</body>
+</html>
